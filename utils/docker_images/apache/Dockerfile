@@ -75,7 +75,7 @@ RUN { \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 RUN { \
-    echo 'memory_limit = 64MB'; \
+    echo 'memory_limit = 256M'; \
   } > /usr/local/etc/php/conf.d/mem-limit.ini
 
 RUN set -eux; \
