@@ -1,0 +1,40 @@
+version: '3'
+services:
+  ### APACHE ###
+  web:
+    container_name: ${SITE_NAME}-web
+    build:
+      context: .
+      dockerfile: ./utils/docker_images/apache/Dockerfile
+    volumes:
+      - "./web/:/var/www/html"
+      - "./config-docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf"
+      - "./config-docker/apache/default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf"
+      - "./config-docker/apache/apache2.conf:/etc/apache2/apache2.conf"
+#      - "./config-docker/apache/php.ini:/usr/local/etc/php/php.ini"
+    ports:
+      - "${HOST_PORT}:80"
+      - "${HOST_SSL_PORT}:443"
+
+    environment:
+      XDEBUG_CONFIG: idekey=PHPSTORM remote_host=172.17.0.1 remote_port=9000
+
+  mysql:
+    container_name: ${SITE_NAME}-mysql
+    image: "mariadb"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASS}"
+      MYSQL_DATABASE: ${DB_NAME}
+#    volumes:
+#      - "./data/mysql:/var/lib/mysql"
+#    restart: always
+
+  phpmyadmin:
+    container_name: ${SITE_NAME}-pma
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    links:
+      - "mysql:db"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
